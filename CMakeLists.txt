@@ -3,6 +3,7 @@ project(ilqgames C CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Build options.
+option(BUILD_TIMING "BUILD timing" ON)
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_DOCUMENTATION "Build documentation" ON)
 
@@ -48,6 +49,11 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/)
 
 # Find and build executables.
 add_subdirectory(exec)
+
+if (BUILD_TIMING)
+  message("Build timing is enabled.")
+  add_subdirectory(timing)
+endif(BUILD_TIMING)
 
 # Find and build tests.
 if (BUILD_TESTS)
