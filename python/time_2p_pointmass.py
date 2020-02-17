@@ -13,25 +13,19 @@ HORIZON = 10.0
 NUM_TIMESTEPS = int(HORIZON / DT)
 
 # 2D point mass.
-A = np.eye(4) + DT * np.array([
-    [0.0, 0.0, 1.0, 0.0],
-    [0.0, 0.0, 0.0, 1.0],
-    [0.0, 0.0, 0.0, 0.0],
-    [0.0, 0.0, 0.0, 0.0]
+A = np.eye(2) + DT * np.array([
+    [0.0, 1.0],
+    [0.0, 0.0]
 ])
 
 B1 = DT * np.array([
-    [0.0, 0.0],
-    [0.0, 0.0],
-    [1.0, 0.0],
-    [0.0, 1.0]
+    [0.05],
+    [1.0]
 ])
 
 B2 = DT * np.array([
-    [1.0, 0.0],
-    [0.0, 1.0],
-    [0.0, 0.0],
-    [0.0, 0.0]
+    [0.032],
+    [0.11]
 ])
 
 As = [A] * NUM_TIMESTEPS
@@ -39,17 +33,16 @@ B1s = [B1] * NUM_TIMESTEPS
 B2s = [B2] * NUM_TIMESTEPS
 
 # State costs.
-Q1 = np.diag([1.0, 2.0, 0.0, 0.0]); Q1s = [Q1] * NUM_TIMESTEPS
+Q1 = np.diag([1.0, 1.0]); Q1s = [Q1] * NUM_TIMESTEPS
 Q2 = -Q1; Q2s = [Q2] * NUM_TIMESTEPS
-#Q2 = np.array([[1.0, 0.25], [0.25, 1.0]]); Q2s = [Q2] * NUM_TIMESTEPS
-l1 = np.zeros((4, 1)); l1s = [l1] * NUM_TIMESTEPS
-l2 = l1; l2s = [l2] * NUM_TIMESTEPS
+l1 = np.zeros((2, 1)); l1s = [l1] * NUM_TIMESTEPS
+l2 = -l1; l2s = [l2] * NUM_TIMESTEPS
 
 # Control costs.
-R11 = np.eye(2); R11s = [R11] * NUM_TIMESTEPS
-R12 = np.zeros((2, 2)); R12s = [R12] * NUM_TIMESTEPS
-R21 = np.zeros((2, 2)); R21s = [R21] * NUM_TIMESTEPS
-R22 = np.eye(2); R22s = [R22] * NUM_TIMESTEPS
+R11 = np.eye(1); R11s = [R11] * NUM_TIMESTEPS
+R12 = np.zeros((1, 1)); R12s = [R12] * NUM_TIMESTEPS
+R21 = np.zeros((1, 1)); R21s = [R21] * NUM_TIMESTEPS
+R22 = np.eye(1); R22s = [R22] * NUM_TIMESTEPS
 
 # timing results
 time_sum = 0

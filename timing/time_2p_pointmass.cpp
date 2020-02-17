@@ -62,26 +62,25 @@ class TwoPlayerPointMass1D : public MultiPlayerDynamicalSystem {
 }  // anonymous namespace
 
 // Reset with nonzero nominal state and control.
-std::vector<PlayerCost> constructPlayerCost(float nominal = 0.0) {
+std::vector<PlayerCost> constructPlayerCost() {
   auto pc = std::vector<PlayerCost>();
-  constexpr float kRelativeCostScaling = 0.1;
 
   PlayerCost player1_cost;
   player1_cost.AddStateCost(
-      std::make_shared<QuadraticCost>(1.0, -1, nominal));
+      std::make_shared<QuadraticCost>(1.0, -1));
   player1_cost.AddControlCost(
-      0, std::make_shared<QuadraticCost>(1.0, -1, nominal));
+      0, std::make_shared<QuadraticCost>(1.0, -1));
   player1_cost.AddControlCost(
-      1, std::make_shared<QuadraticCost>(kRelativeCostScaling, -1, nominal));
+      1, std::make_shared<QuadraticCost>(0.0, -1));
   pc.push_back(player1_cost);
 
   PlayerCost player2_cost;
   player2_cost.AddStateCost(
-      std::make_shared<QuadraticCost>(kRelativeCostScaling, -1, nominal));
+      std::make_shared<QuadraticCost>(-1.0, -1));
   player2_cost.AddControlCost(
-      0, std::make_shared<QuadraticCost>(kRelativeCostScaling, -1, nominal));
+      0, std::make_shared<QuadraticCost>(0.0, -1));
   player2_cost.AddControlCost(
-      1, std::make_shared<QuadraticCost>(1.0, -1, nominal));
+      1, std::make_shared<QuadraticCost>(1.0, -1));
   pc.push_back(player2_cost);
 
   return pc;
