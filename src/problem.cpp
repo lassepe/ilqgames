@@ -51,6 +51,11 @@
 #include <algorithm>
 #include <memory>
 #include <vector>
+#include <chrono>
+#include <ratio>
+
+using HRClock = std::chrono::high_resolution_clock;
+using ms = std::chrono::milliseconds;
 
 namespace ilqgames {
 
@@ -76,6 +81,44 @@ std::shared_ptr<SolverLog> Problem::Solve(Time max_runtime) {
   strategies_->swap(final_strategies);
   operating_point_->swap(final_operating_point);
 
+  LOG(INFO) << "Solver succeeded.";
+  return log;
+}
+
+std::shared_ptr<SolverLog> Problem::TimedSolve(Time max_runtime) {
+  const int n_samples = 3;
+  std::chrono::duration<double, std::milli> time_sum;
+  LOG(INFO) << "Init:" << std::chrono::duration_cast<ms>(time_sum).count() << " millisconds.";
+
+  CHECK_NOTNULL(solver_.get());
+  CHECK_NOTNULL(strategies_.get());
+  CHECK_NOTNULL(operating_point_.get());
+
+  // Create empty log.
+  std::shared_ptr<SolverLog> log = CreateNewLog();
+
+  // Solver the problem.
+  OperatingPoint final_operating_point(*operating_point_);
+  std::vector<Strategy> final_strategies(*strategies_);
+  // time without preallocation
+  for (int i = 0; i < n_samples; i++)
+  {
+    const auto t_start = HRClock::now();
+    bool success = solver_->Solve(x0_, *operating_point_, *strategies_,
+                                  &final_operating_point, &final_strategies, log.get(),
+                                  max_runtime);
+    const auto t_end = HRClock::now();
+    const auto dt = HRClock::now() - t_start;
+    LOG(INFO) << "Run took: " << std::chrono::duration<double, std::milli>(dt).count() << " millisconds";
+    time_sum += dt;
+    assert(success);
+  }
+
+  LOG(INFO) << "Average over " << n_samples << " was: " << time_sum.count() / n_samples << " millisconds.";
+
+  // Store these new strategies/operating point.
+  strategies_->swap(final_strategies);
+  operating_point_->swap(final_operating_point);
   LOG(INFO) << "Solver succeeded.";
   return log;
 }

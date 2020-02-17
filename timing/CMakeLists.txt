@@ -5,7 +5,7 @@ foreach(timing_src ${timing_srcs})
   get_filename_component(timing_target ${timing_src} NAME_WE)
   message("Including binary \"${BoldMagenta}${timing_target}${ColorReset}\".")
   add_executable(${timing_target} ${timing_src})
-  target_link_libraries(${timing_target} ilqgames ${ilqgames_LIBRARIES})
+  target_link_libraries(${timing_target} ilqgames ${ilqgames_LIBRARIES} imgui glfw)
   ilqgames_set_runtime_directory(${timing_target} ${EXECUTABLE_OUTPUT_PATH}/timing)
 endforeach()
 

@@ -1,43 +1,6 @@
-/*
- * Copyright (c) 2019, The Regents of the University of California (Regents).
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *
- *    1. Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *
- *    2. Redistributions in binary form must reproduce the above
- *       copyright notice, this list of conditions and the following
- *       disclaimer in the documentation and/or other materials provided
- *       with the distribution.
- *
- *    3. Neither the name of the copyright holder nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * Please contact the author(s) of this library if you have any questions.
- * Authors: David Fridovich-Keil   ( dfk@eecs.berkeley.edu )
- */
-
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Three player intersection example. Ordering is given by the following:
-// (P1, P2, P3) = (Car 1, Car 2, Pedestrian).
+// Three player unicycle navigation example for timing benchmark
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +18,7 @@
 #include <ilqgames/dynamics/single_player_car_5d.h>
 #include <ilqgames/dynamics/single_player_car_6d.h>
 #include <ilqgames/dynamics/single_player_unicycle_4d.h>
-#include <ilqgames/examples/three_player_intersection_example.h>
+#include <ilqgames/examples/three_player_unicycle_example.h>
 #include <ilqgames/geometry/polyline2.h>
 #include <ilqgames/solver/ilq_solver.h>
 #include <ilqgames/solver/problem.h>
@@ -168,7 +131,7 @@ static const Dimension kP3OmegaIdx = 0;
 static const Dimension kP3AIdx = 1;
 }  // anonymous namespace
 
-ThreePlayerIntersectionExample::ThreePlayerIntersectionExample(
+ThreePlayerUnicycleExample::ThreePlayerUnicycleExample(
     const SolverParams& params) {
   // Create dynamics.
   const std::shared_ptr<const ConcatenatedDynamicalSystem> dynamics(
@@ -322,17 +285,17 @@ ThreePlayerIntersectionExample::ThreePlayerIntersectionExample(
                               kTimeHorizon, params));
 }
 
-inline std::vector<float> ThreePlayerIntersectionExample::Xs(
+inline std::vector<float> ThreePlayerUnicycleExample::Xs(
     const VectorXf& x) const {
   return {x(kP1XIdx), x(kP2XIdx), x(kP3XIdx)};
 }
 
-inline std::vector<float> ThreePlayerIntersectionExample::Ys(
+inline std::vector<float> ThreePlayerUnicycleExample::Ys(
     const VectorXf& x) const {
   return {x(kP1YIdx), x(kP2YIdx), x(kP3YIdx)};
 }
 
-inline std::vector<float> ThreePlayerIntersectionExample::Thetas(
+inline std::vector<float> ThreePlayerUnicycleExample::Thetas(
     const VectorXf& x) const {
   return {x(kP1HeadingIdx), x(kP2HeadingIdx), x(kP3HeadingIdx)};
 }

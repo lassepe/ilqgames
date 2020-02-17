@@ -63,6 +63,8 @@ class Problem {
   std::shared_ptr<SolverLog> Solve(
       Time max_runtime = std::numeric_limits<Time>::infinity());
 
+  std::shared_ptr<SolverLog> TimedSolve(Time max_runtime = std::numeric_limits<Time>::infinity());
+
   // Reset the initial time and change nothing else.
   void ResetInitialTime(Time t0) { operating_point_->t0 = t0; }
   void ResetInitialState(const VectorXf& x0) { x0_ = x0; }
