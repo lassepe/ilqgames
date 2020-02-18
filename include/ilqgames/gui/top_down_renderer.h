@@ -70,7 +70,7 @@ class TopDownRenderer {
         problem_(problem),
         center_delta_(0.0, 0.0),
         last_mouse_position_(0.0, 0.0),
-        pixel_to_meter_ratio_(5.0) {
+        pixel_to_meter_ratio_(50.0) {
     CHECK_NOTNULL(sliders_.get());
     CHECK_NOTNULL(problem_.get());
     for (const auto& log : logs) CHECK_NOTNULL(log.get());

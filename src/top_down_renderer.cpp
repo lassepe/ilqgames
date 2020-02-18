@@ -124,9 +124,9 @@ void TopDownRenderer::Render() {
   // Agent colors will all be greenish. Also specify circle radius and triangle
   // base and height (in pixels).
   const ImU32 agent_color = ImColor(ImVec4(0.0, 0.75, 0.15, 1.0));
-  const float agent_radius = std::max(5.0f, LengthToPixels(2.5));
-  const float agent_base = std::max(6.0f, LengthToPixels(2.5));
-  const float agent_height = std::max(10.0f, LengthToPixels(3.0));
+  const float agent_radius = std::max(5.0f, LengthToPixels(0.1));
+  const float agent_base = std::max(6.0f, LengthToPixels(0.1));
+  const float agent_height = std::max(10.0f, LengthToPixels(0.1));
 
   // Draw each position as either an isosceles triangle (if heading idx is
   // >= 0) or a circle (if heading idx < 0).
