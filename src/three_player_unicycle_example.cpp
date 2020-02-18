@@ -41,66 +41,59 @@ static constexpr size_t kNumTimeSteps =
     static_cast<size_t>(kTimeHorizon / kTimeStep);
 
 // Cost weights.
-static constexpr float kStateRegularization = 1.0;
+static constexpr float kStateRegularization = 5.0;
 static constexpr float kControlRegularization = 5.0;
 
-static constexpr float kOmegaCostWeight = 0.1;
-static constexpr float kACostWeight = 0.1;
+static constexpr float kOmegaCostWeight = 10.0;
+static constexpr float kACostWeight = 10.0;
 
-static constexpr float kMaxVCostWeight = 10.0;
-static constexpr float kNominalVCostWeight = 10.0;
+static constexpr float kMaxVCostWeight = 50.0;
+static constexpr float kNominalVCostWeight = 30.0;
+static constexpr float kGoalCostWeight = 300.0;
 
-static constexpr float kGoalCostWeight = 0.1;
-static constexpr float kLaneCostWeight = 25.0;
-static constexpr float kLaneBoundaryCostWeight = 100.0;
-
-static constexpr float kMinProximity = 6.0;
+static constexpr float kMinProximity = 1.2;
 static constexpr float kP1ProximityCostWeight = 50.0;
 static constexpr float kP2ProximityCostWeight = 50.0;
-static constexpr float kP3ProximityCostWeight = 10.0;
+static constexpr float kP3ProximityCostWeight = 50.0;
 using ProxCost = ProximityCost;
 
 static constexpr bool kOrientedRight = true;
 
-// Lane width.
-static constexpr float kLaneHalfWidth = 2.5;  // m
-
 // Goal points.
-static constexpr float kP1GoalX = -6.0;   // m
-static constexpr float kP1GoalY = 600.0;  // m
+static constexpr float kP1GoalX = 3.0;   // m
+static constexpr float kP1GoalY = 0.0;  // m
 
-static constexpr float kP2GoalX = 500.0;  // m
-static constexpr float kP2GoalY = 12.0;   // m
+static constexpr float kP2GoalX = -0.1;  // m
+static constexpr float kP2GoalY = -3.0;   // m
 
-static constexpr float kP3GoalX = 100.0;  // m
-static constexpr float kP3GoalY = 16.0;   // m
+static constexpr float kP3GoalX = 0.1;  // m
+static constexpr float kP3GoalY = 3.0;   // m
 
 // Nominal and max speed.
-static constexpr float kP1MaxV = 12.0;  // m/s
-static constexpr float kP2MaxV = 12.0;  // m/s
+static constexpr float kP1MaxV = 2.0;  // m/s
+static constexpr float kP2MaxV = 2.0;  // m/s
 static constexpr float kP3MaxV = 2.0;   // m/s
-static constexpr float kMinV = 1.0;     // m/s
+static constexpr float kMinV = -0.05;     // m/s
 
-static constexpr float kP1NominalV = 8.0;  // m/s
-static constexpr float kP2NominalV = 5.0;  // m/s
-static constexpr float kP3NominalV = 1.5;  // m/s
+static constexpr float kP1NominalV = 0;  // m/s
+static constexpr float kP2NominalV = 0;  // m/s
+static constexpr float kP3NominalV = 0;  // m/s
 
 // Initial state.
-static constexpr float kP1InitialX = -2.0;   // m
-static constexpr float kP2InitialX = -10.0;  // m
-static constexpr float kP3InitialX = -11.0;  // m
+static constexpr float kP1InitialX = -3.0;   // m
+static constexpr float kP1InitialY = 0.0;  // m
+static constexpr float kP1InitialHeading = 0;   // rad
+static constexpr float kP1InitialSpeed = 0.05;   // m/s
 
-static constexpr float kP1InitialY = -30.0;  // m
-static constexpr float kP2InitialY = 45.0;   // m
-static constexpr float kP3InitialY = 16.0;   // m
-
-static constexpr float kP1InitialHeading = M_PI_2;   // rad
+static constexpr float kP2InitialX = -0.1;  // m
+static constexpr float kP2InitialY = 3.0;   // m
 static constexpr float kP2InitialHeading = -M_PI_2;  // rad
-static constexpr float kP3InitialHeading = 0.0;      // rad
+static constexpr float kP2InitialSpeed = 0.1;   // m/s
 
-static constexpr float kP1InitialSpeed = 5.0;   // m/s
-static constexpr float kP2InitialSpeed = 5.0;   // m/s
-static constexpr float kP3InitialSpeed = 1.25;  // m/s
+static constexpr float kP3InitialX = 0.1;  // m
+static constexpr float kP3InitialY = -3.0;   // m
+static constexpr float kP3InitialHeading = M_PI_2;      // rad
+static constexpr float kP3InitialSpeed = 0.1;  // m/s
 
 // State dimensions.
 using P1 = SinglePlayerUnicycle4D;
@@ -224,7 +217,7 @@ ThreePlayerUnicycleExample::ThreePlayerUnicycleExample(
   p3_cost.AddControlCost(2, p3_a_cost);
 
   // Goal costs.
-  constexpr float kFinalTimeWindow = 0.5;  // s
+  constexpr float kFinalTimeWindow = 0.15;  // s
   const auto p1_goalx_cost = std::make_shared<FinalTimeCost>(
       std::make_shared<QuadraticCost>(kGoalCostWeight, kP1XIdx, kP1GoalX),
       kTimeHorizon - kFinalTimeWindow, "GoalX");
