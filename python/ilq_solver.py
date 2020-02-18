@@ -118,9 +118,9 @@ class ILQSolver(object):
         """ Run the algorithm for the specified parameters. """
         iteration = 0
 
-        while not self._is_converged():
+        while not self._is_converged() and iteration:
             # (1) Compute current operating point and update last one.
-            xs, us, costs = self._compute_operating_point()
+            xs, us, costs = self._compute_operating_point(self._alpha_scaling)
             self._last_operating_point = self._current_operating_point
             self._current_operating_point = (xs, us, costs)
 
@@ -214,7 +214,7 @@ class ILQSolver(object):
             self._linesearch()
             iteration += 1
 
-    def _compute_operating_point(self):
+    def _compute_operating_point(self, alpha_scaling):
         """
         Compute current operating point by propagating through dynamics.
 
@@ -237,14 +237,10 @@ class ILQSolver(object):
                              for ui_dim in self._dynamics._u_dims]
 
             feedback = lambda x, u_ref, x_ref, P, alpha : \
-                       u_ref - P @ (x - x_ref) - self._alpha_scaling * alpha
+                       u_ref - P @ (x - x_ref) -  alpha_scaling * alpha
             u = [feedback(xs[k], current_u[ii], current_x,
                           self._Ps[ii][k], self._alphas[ii][k])
                  for ii in range(self._num_players)]
-
-            # Clip u1 and u2.
-#            for ii in range(self._num_players):
-#                u[ii] = self._u_constraints[ii].clip(u[ii])
 
             for ii in range(self._num_players):
                 us[ii].append(u[ii])
@@ -261,22 +257,32 @@ class ILQSolver(object):
         return xs, us, costs
 
     def _linesearch(self):
-        """ Linesearch for both players separately. """
-        pass
+        # ugly hack to have a different scaling at the first time step
+        self._alpha_scaling = 0.75 * 2
+
+        for ii in range(20):
+            self._alpha_scaling *= 0.5
+            potential_next_op = self._compute_operating_point(self._alpha_scaling)
+            if self._are_operating_points_close(self._current_operating_point,
+                    potential_next_op, 2.0):
+                return True
+
+        return False
+
+    def _are_operating_points_close(self, last_op, current_op, TOLERANCE):
+        # Tolerance for comparing operating points. If all states changes
+        # within this tolerance in the Euclidean norm then we've converged.
+        for ii in range(self._horizon):
+            last_x = last_op[0][ii]
+            current_x = current_op[0][ii]
+            if np.linalg.norm(last_x - current_x, np.inf) > TOLERANCE:
+                return False
+
+        return True
 
     def _is_converged(self):
         """ Check if the last two operating points are close enough. """
         if self._last_operating_point is None:
             return False
-
-        # Tolerance for comparing operating points. If all states changes
-        # within this tolerance in the Euclidean norm then we've converged.
-        TOLERANCE = 1e-4
-        for ii in range(self._horizon):
-            last_x = self._last_operating_point[0][ii]
-            current_x = self._current_operating_point[0][ii]
-
-            if np.linalg.norm(last_x - current_x) > TOLERANCE:
-                return False
-
-        return True
+        return self._are_operating_points_close(self._last_operating_point,
+                self._current_operating_point, 0.1)
