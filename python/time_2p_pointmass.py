@@ -46,7 +46,7 @@ R22 = np.eye(1); R22s = [R22] * NUM_TIMESTEPS
 
 # timing results
 time_sum = 0
-n_samples = 1000
+n_samples = 100
 print("Running experiments with %d samples:" % (n_samples))
 for i in range(n_samples):
     t_start = timer()
