@@ -36,43 +36,41 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Base class for all iterative LQ game solvers.
-// Structured so that derived classes may only modify the `ModifyLQStrategies`
-// and `HasConverged` virtual functions.
+// Three player flat unicycle example.
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <ilqgames/cost/player_cost.h>
-#include <ilqgames/solver/ilq_flat_solver.h>
-#include <ilqgames/solver/solve_lq_game.h>
-#include <ilqgames/utils/linear_dynamics_approximation.h>
-#include <ilqgames/utils/loop_timer.h>
-#include <ilqgames/utils/operating_point.h>
-#include <ilqgames/utils/quadratic_cost_approximation.h>
-#include <ilqgames/utils/strategy.h>
-#include <ilqgames/utils/types.h>
+#ifndef ILQGAMES_EXAMPLE_THREE_PLAYER_FLAT_UNICYCLE_EXAMPLE_H
+#define ILQGAMES_EXAMPLE_THREE_PLAYER_FLAT_UNICYCLE_EXAMPLE_H
 
-#include <glog/logging.h>
-#include <memory>
-#include <vector>
+#include <ilqgames/dynamics/multi_player_flat_system.h>
+#include <ilqgames/solver/problem.h>
+#include <ilqgames/solver/solver_params.h>
+#include <ilqgames/solver/top_down_renderable_problem.h>
 
 namespace ilqgames {
 
-void ILQFlatSolver::ComputeLinearization(
-    std::vector<LinearDynamicsApproximation>* linearization) {
-  CHECK_NOTNULL(linearization);
+class ThreePlayerFlatUnicycleExample : public TopDownRenderableProblem {
+ public:
+  ~ThreePlayerFlatUnicycleExample() {}
+  ThreePlayerFlatUnicycleExample(const SolverParams& params);
 
-  // Cast dynamics to appropriate type.
-  const auto dyn = static_cast<const MultiPlayerFlatSystem*>(dynamics_.get());
+  // Unpack x, y, heading (for each player, potentially) from a given linear
+  // system state.
+  std::vector<float> Xs(const VectorXf& xi) const;
+  std::vector<float> Ys(const VectorXf& xi) const;
+  std::vector<float> Thetas(const VectorXf& xi) const;
 
-  // Populate one timestep at a time.
-  for (size_t kk = 0; kk < linearization->size(); kk++)
-    (*linearization)[kk] = dyn->LinearizedSystem();
-}
+  // Dynamics as shared ptr.
+  std::shared_ptr<const MultiPlayerFlatSystem> Dynamics() const {
+    return dynamics_;
+  }
 
-float ILQFlatSolver::StateDistance(const VectorXf& x1, const VectorXf& x2,
-                                   const std::vector<Dimension>& dims) const {
-  return GameSolver::StateDistance(x1, x2, dims);
-}
+ private:
+  // Dynamics as shared ptr.
+  std::shared_ptr<const MultiPlayerFlatSystem> dynamics_;
+};  // class ThreePlayerFlatUnicycleExample
 
 }  // namespace ilqgames
+
+#endif
